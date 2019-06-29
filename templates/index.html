@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block body %}
-    {% if 'user' in session %}
-    {% elif 'authorized' in session %}
-    show page!
+<div class="container">
+  <div>
+    {% if 'authorized' in session %}
+    show users
     {% else %}
-    <div class="container">
-      <div>
+
         <p>
 	      Roro is a private message board for friends and family.
         <br><br>
@@ -20,7 +20,7 @@
             </div>
           </form>
         </p>
-      </div>
-    </div>
     {% endif %}
+  </div>
+</div>
 {% endblock %}
