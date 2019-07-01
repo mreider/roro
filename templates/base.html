@@ -14,29 +14,36 @@
         padding:12px;
         color: #9F6000;
         background-color: #FEEFB3;
-      .profile-pic{
+      }
+      .profile-pic {
         border-radius: 50%;
         object-fit: cover;
-        width: 150px;
-        height: 150px;
+        width: 80px;
+        height: 80px;
       }
+      .hero {
+  				background: #eee;
+  				padding: 20px;
+  				border-radius: 10px;
+  				margin-top: 1em;
+  			}
     </style>
 	</head>
 	<body>
 		<nav class="nav" tabindex="-1" onclick="this.focus()">
 			<div class="container">
 				<a class="pagename current" href="#">roro ❤️</a>
-        {% if 'user' in session %}
-				<a href="#">Logout</a>
+        {% if 'authorized' in session %}
+				<a href="/logout">Logout</a>
         {% endif %}
 			</div>
 		</nav>
-    {% if 'user' in session %}
+    {% if 'authorized' in session %}
     <button class="btn-close btn btn-sm">×</button>
     {% endif %}
 		<div class="container">
       {% if error %}
-      <p class=error><strong>Error:</strong> {{ error }}
+      <p class=error>{{ error }}
       {% endif %}
 			{% block body %}{% endblock %}
 		</div>

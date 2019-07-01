@@ -2,21 +2,31 @@
 {% block body %}
 <div class="container">
   <div>
-    {% if 'authorized' in session %}
-    show users
+    {% if session['authorized'] == "true" %}
+    <h3>Choose yourself from the list. <br><br>Ha ha, I know, funny to choose someone else, but please don't.
+    </h3>
+          {% for user in users %}
+          <div class="row">
+            <div class="col c8">
+            <a href="/messages?userid={{user['id']}}" class="btn btn-sm btn-a" style="width:60%">
+              <img src="/static/{{user['image']}}" class="profile-pic" style="vertical-align:middle">
+              <span>&nbsp;&nbsp;&nbsp;</span><span style="font-size:150%">{{user['first_name']}}</span>
+            </a>
+            </div>
+            <div class="col c4">&nbsp;</div>
+            </div>
+          {% endfor %}
     {% else %}
-
         <p>
 	      Roro is a private message board for friends and family.
         <br><br>
         If you want to join, just get in touch with one of us and we'll add you.
         <br><br>
         To login - use roro's last name.
-          <form method="post">
+          <form method="post" action="\">
             <div class="row">
               <div class="col c4"><input type="password" name="password" class="smooth"> <input type="submit" class="btn btn-a btn-sm smooth"></div>
               <div class="col c8">&nbsp;</div>
-              {{foo}}
             </div>
           </form>
         </p>
