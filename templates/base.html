@@ -21,6 +21,12 @@
         width: 80px;
         height: 80px;
       }
+			.profile-pic-small {
+				border-radius: 50%;
+				object-fit: cover;
+				width: 30px;
+				height: 30px;
+			}
       .hero {
   				background: #eee;
   				padding: 20px;
@@ -33,14 +39,8 @@
 		<nav class="nav" tabindex="-1" onclick="this.focus()">
 			<div class="container">
 				<a class="pagename current" href="#">roro ❤️</a>
-        {% if 'authorized' in session %}
-				<a href="/logout">Logout</a>
-        {% endif %}
 			</div>
 		</nav>
-    {% if 'authorized' in session %}
-    <button class="btn-close btn btn-sm">×</button>
-    {% endif %}
 		<div class="container">
       {% if error %}
       <p class=error>{{ error }}

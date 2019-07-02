@@ -2,14 +2,41 @@
 {% block body %}
 <div class="container">
   <div>
-    {% for message in messages.items %}
-<p>
-  {{ message.body }} 
-</p>
-{% endfor %}
-{% if posts.has_prev %}<a href="{{ url_for('view', page=posts.prev_num) }}">&lt;&lt; Newer posts</a>{% else %}&lt;&lt; Newer posts{% endif %} |
-{% if posts.has_next %}<a href="{{ url_for('view', page=posts.next_num) }}">Older posts &gt;&gt;</a>{% else %}Older posts &gt;&gt;{% endif %}
+  <div class="row">
+    <div class="col c8">
+    <span class="btn btn-sm btn-a" style="width:100%">
+      <img src="/static/{{user[3]}}" class="profile-pic-small" style="vertical-align:middle">
+      &nbsp;&nbsp;&nbsp;<span style="font-size:150%">Hello {{user[1]}}</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="/?switch=1" class="btn btn-sm btn-d" style="width:30%">
+        Switch users
+      </a>
+    </span>
+    </div>
+    <div class="col c4">
+      &nbsp;
+    </div>
+  </div>
+  {% for message in messages %}
 
+  <div class="row">
+    <div class="col c8">
+    <div class="hero" style="width:100%">
+      <img src="/static/{{message[6]}}" class="profile-pic-small" style="vertical-align:middle">
+      &nbsp;&nbsp;&nbsp;<span style="font-size:150%">{{message[4]}}</span>
+      posted on {{message[2]}}
+      <hr>
+      <span>{{message[1]}}</span>
+    </div>
+    </div>
+    <div class="col c4">
+      &nbsp;
+    </div>
+  </div>
+
+  {{ message[] }}
+
+{% endfor %}
   </div>
 </div>
 {% endblock %}

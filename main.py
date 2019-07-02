@@ -1,15 +1,19 @@
 import os
-import gevent
+import sqlite3
+import babel
+import datetime
+import pytz
+import dateutil.parser
 from os.path import join, dirname
 from dotenv import load_dotenv
 from flask import Flask
 from flask import render_template
 from flask import session, redirect, url_for, escape, request
 from flask_limiter import Limiter
-from flask_sqlalchemy import SQLAlchemy
 from flask_limiter.util import get_remote_address
-from flask_debugtoolbar import DebugToolbarExtension
-from flask import copy_current_request_context
+import babel
+
+
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 app = Flask(__name__)
@@ -18,43 +22,30 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"]
 )
+
 app.secret_key = os.environ['RORO_SECRET_KEY'].encode('utf8')
 db_path = os.path.join(os.path.dirname(__file__), 'app.db')
-db_uri = 'sqlite:///{}'.format(db_path)
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-db = SQLAlchemy(app)
-toolbar = DebugToolbarExtension(app)
-error = None
-page = 1
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(), nullable=False)
-    last_name = db.Column(db.String(), nullable=False)
-    image = db.Column(db.String(), nullable=False)
-
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False)
-    body = db.Column(db.String(), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-class Picture(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    picture_url = db.Column(db.String(), nullable=False)
-    message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=False)
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
-    users = User.query.order_by(User.first_name).all()
+    error = None
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('SELECT * FROM user order by first_name')
+    users = c.fetchall()
     if request.method == 'POST':
         if request.form['password'].lower() == os.environ['RORO_PASSWORD']:
             session['authorized'] = "true"
             return render_template('index.html', session=session, error=error, users=users)
         else:
             error = 'Invalid password'
-    return render_template('index.html', session=session, error=error, users=users)
+    if request.method == 'GET':
+        if 'switch' in request.args:
+            session['userid'] = 0
+        if session['authorized'] == "true" and int(session['userid']) > 0:
+            return redirect("/messages", code=302)
 
+    return render_template('index.html', session=session, error=error, users=users)
 
 @app.route('/logout')
 def logout():
@@ -64,11 +55,11 @@ def logout():
 
 @app.route('/messages')
 def messages():
+    error = None
+    page = 1
     if session['authorized'] == "false":
         error = "Bad user id"
     if 'userid' in request.args:
-        if not isinstance(request.args.get('userid'), int)):
-            error = "User id is not a number"
         session['userid'] = request.args.get('userid')
     if not session.get('userid'):
         error = "No user"
@@ -77,11 +68,26 @@ def messages():
         # and so ends the auth and user errors...
 
     if 'page' in request.args:
-        if not isinstance(request.args.get('page'), int)):
+        if not isinstance(request.args.get('page'), int):
             error = "Page is not a number"
-            page = 1
         else:
             page = request.args.get('page')
-    user = User.query.filter_by(id=session['userid']).first()
-    messages = session.query(Message,User).filter(User.id == Message.user_id).order_by(Message.time.desc).paginate(page,15,error_out=False)
-    return render_template('messages.html', session=session, error=error, user=user, messages=messages, page=page)
+    userid = (session['userid'],)
+    offset = ((page * 10) - 10,)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('SELECT * FROM user where id = ?', userid)
+    user = c.fetchone()
+    c.execute('SELECT message.id, message.body,message.date,user.id, user.first_name, user.last_name, user.image FROM message,user where message.user_id = user.id order by date desc limit 10 OFFSET ?', offset)
+    messages = c.fetchall()
+    format = '%Y-%m-%dT%H:%M:%S%z'
+    i = 0
+    messages_better_dates = []
+    while i < len(messages):
+        d = datetime.datetime.strptime(messages[i][2], format)
+        d = d.strftime('%B %m %Y %H:%M')
+        list_o_message_values = (messages[i][0], messages[i][1], d, messages[i][3], messages[i][4], messages[i][5], messages[i][6])
+        messages_better_dates.append(list_o_message_values)
+        i=i+1
+
+    return render_template('messages.html', session=session, error=error, user=user, messages=messages_better_dates, page=page)
