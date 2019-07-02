@@ -80,7 +80,7 @@ def messages():
     user = c.fetchone()
     c.execute('SELECT message.id, message.body,message.date,user.id, user.first_name, user.last_name, user.image FROM message,user where message.user_id = user.id order by date desc limit 10 OFFSET ?', offset)
     messages = c.fetchall()
-    format = '%Y-%m-%dT%H:%M:%S%z'
+    format = '%Y-%m-%dT%H:%M:%S'
     i = 0
     messages_better_dates = []
     while i < len(messages):

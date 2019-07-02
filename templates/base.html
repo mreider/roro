@@ -7,7 +7,8 @@
 
 		<title>roro ❤️</title>
 
-		<link href="//mincss.com/entireframework.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <style>
       .error {
         margin: 10px 0px;
@@ -36,11 +37,13 @@
     </style>
 	</head>
 	<body>
-		<nav class="nav" tabindex="-1" onclick="this.focus()">
-			<div class="container">
-				<a class="pagename current" href="#">roro ❤️</a>
-			</div>
-		</nav>
+		<nav class="navbar navbar-expand-sm bg-primary">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" style="color:white;font-size:150%" href="#">roro ❤️</a>
+        </li>
+  </ul>
+</nav>
 		<div class="container">
       {% if error %}
       <p class=error>{{ error }}
