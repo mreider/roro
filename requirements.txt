@@ -4,3 +4,5 @@ python-dotenv==0.10.3
 flask-limiter==1.0.1
 flask-debugtoolbar==0.10.1
 babel==2.7.0
+flask-uploads==0.2.1
+flask-paginate==0.5.3

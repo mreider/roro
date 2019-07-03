@@ -2,29 +2,41 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col">
-      <br>
-      <nav class="nav nav-pills nav-fill">
-        <span class="nav-item nav-link" style="text-align:left">
-          <img src="/static/{{user[3]}}" class="profile-pic-small" style="vertical-align:middle"> {{user[1]}}
-        </span>
-        <a class="nav-item nav-link  active" href="/?switch=1">Switch users</a>&nbsp;
-        <a class="nav-item nav-link active" href="/logout">Logout</a>&nbsp;
-      </nav>
-    </div>
+    <div class="col2">
+  <br>
+  <span style="text-align:left">
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="/static/{{user[3]}}" class="profile-pic-small" style="vertical-align:middle"> {{user[1]}}
+  </span>&nbsp;&nbsp;
+  <a class="btn btn-outline-primary" href="#postMessage" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="postMessage">Post a message</a>
+  <a class="btn btn-outline-primary" href="#postPicture" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="postPicture" >Post a picture</a>
+  <a class="btn btn-outline-primary" href="/?switch=1">Switch users</a>
+  <a class="btn btn-outline-primary" href="/logout">Logout</a>
+
+  </div>
   </div>
   <div class="row">
     <div class="col">
+      <div class="collapse" id="postMessage">
       <br>
-
-		<form id="postForm" action="/messages" method="POST" enctype="multipart/form-data" onsubmit="return postForm()">
+      Post a message:
+      <br>
+		<form action="/messages" method="POST" enctype="multipart/form-data">
 			<fieldset>
-					<textarea class="input-block-level" id="summernote" name="content" rows="18">
-					</textarea>
+					<textarea class="input-block-level" name="message" rows="7" style="width:100%"></textarea>
 			</fieldset>
 			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>
-    <br>
+     </div>
+     <div class="collapse" id="postPicture">
+       <br>
+    <form action="/messages" method="POST" enctype="multipart/form-data">
+			<fieldset>
+        <input type="file" name="photo">
+			</fieldset>
+      <br>
+			<button type="submit" class="btn btn-primary">Upload</button>
+		</form>
+    </div>
     </div>
 	</div>
   {% for message in messages %}
@@ -34,11 +46,14 @@
       <img src="/static/{{message[6]}}" class="profile-pic-small" style="vertical-align:middle">
       &nbsp;&nbsp;&nbsp;<span style="font-size:90%">{{message[4]}} on {{message[2]}}</span>
       <hr>
-      <span>{{message[1]}}</span>
+      <span>{{message[1]|safe}}</span>
     </div>
     </div>
   </div>
 
 {% endfor %}
+<br>
+{{links|safe}}
+<br><br>
 </div>
 {% endblock %}
