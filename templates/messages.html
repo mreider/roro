@@ -1,43 +1,44 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="container">
-  <div>
   <div class="row">
-    <div class="col c4">
-    <span style="width:100%">
-      &nbsp;
-    </span>
-    </div>
-    <div class="col c5">
-      <a href="/?switch=1" class="btn btn-sm btn-a" style="width:30%">
-        Switch users
-      </a>
-      <a href="/logout" class="btn btn-sm btn-a" style="width:30%">
-        Logout
-      </a>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <img src="/static/{{user[3]}}" class="profile-pic-small" style="vertical-align:middle">
-      &nbsp;<span style="font-size:100%">{{user[1]}} </span>
+    <div class="col">
+      <br>
+      <nav class="nav nav-pills nav-fill">
+        <span class="nav-item nav-link" style="text-align:left">
+          <img src="/static/{{user[3]}}" class="profile-pic-small" style="vertical-align:middle"> {{user[1]}}
+        </span>
+        <a class="nav-item nav-link  active" href="/?switch=1">Switch users</a>&nbsp;
+        <a class="nav-item nav-link active" href="/logout">Logout</a>&nbsp;
+      </nav>
     </div>
   </div>
-  {% for message in messages %}
-
   <div class="row">
-    <div class="col c8">
+    <div class="col">
+      <br>
+
+		<form id="postForm" action="/messages" method="POST" enctype="multipart/form-data" onsubmit="return postForm()">
+			<fieldset>
+					<textarea class="input-block-level" id="summernote" name="content" rows="18">
+					</textarea>
+			</fieldset>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+    <br>
+    </div>
+	</div>
+  {% for message in messages %}
+  <div class="row">
+    <div class="col">
     <div class="hero" style="width:100%">
       <img src="/static/{{message[6]}}" class="profile-pic-small" style="vertical-align:middle">
-      &nbsp;&nbsp;&nbsp;<span style="font-size:90%">{{message[4]}} wrote this on {{message[2]}}</span>
-
+      &nbsp;&nbsp;&nbsp;<span style="font-size:90%">{{message[4]}} on {{message[2]}}</span>
       <hr>
       <span>{{message[1]}}</span>
     </div>
     </div>
-    <div class="col c4">
-      &nbsp;
-    </div>
   </div>
 
 {% endfor %}
-  </div>
 </div>
 {% endblock %}

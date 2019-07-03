@@ -85,7 +85,7 @@ def messages():
     messages_better_dates = []
     while i < len(messages):
         d = datetime.datetime.strptime(messages[i][2], format)
-        d = d.strftime('%B %m %Y %H:%M')
+        d = d.strftime('%B %m %Y at %H:%M')
         list_o_message_values = (messages[i][0], messages[i][1], d, messages[i][3], messages[i][4], messages[i][5], messages[i][6])
         messages_better_dates.append(list_o_message_values)
         i=i+1
