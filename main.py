@@ -3,6 +3,7 @@ import sqlite3
 import babel
 import datetime
 import time
+import math
 import pytz
 import dateutil.parser
 from os.path import join, dirname
@@ -12,7 +13,6 @@ from flask import render_template
 from flask import session, redirect, url_for, escape, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_paginate import Pagination, get_page_args
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 import babel
 
@@ -37,6 +37,8 @@ patch_request_class(app)  # set maximum file size, default is 16MB
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
+    if 'authorized' not in session:
+        session['authorized'] = "false"
     error = None
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
@@ -66,6 +68,7 @@ def logout():
 def messages():
     error = None
     page = 1
+    pages = 1
     if session['authorized'] == "false":
         error = "Bad user id"
     if 'userid' in request.args:
@@ -112,7 +115,7 @@ def messages():
     user = c.fetchone()
     c.execute('SELECT count(*) as total_pages FROM message')
     total_pages = c.fetchone()
-    pages = int(total_pages[0] / 10)
+    pages = math.ceil(total_pages[0] / 10)
     c.execute('SELECT message.id, message.body,message.date,user.id, user.first_name, user.last_name, user.image FROM message,user where message.user_id = user.id order by date desc limit 10 OFFSET ?', offset)
     messages = c.fetchall()
     format = '%Y-%m-%dT%H:%M:%S'
@@ -128,7 +131,7 @@ def messages():
     if (page > 1):
         last = page - 1
         links = links + "<a href='/messages?page=" + str(last) + "' class='btn btn-outline-primary'>previous page</a>"
-    if ((page / pages) <= 1):
+    if (pages > 0 and (page / pages) < 1):
         next = page + 1
         links = links + "&nbsp;&nbsp;<a href='/messages?page=" + str(next) + "' class='btn btn-outline-primary'>next page</a>"
 
