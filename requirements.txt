@@ -1,5 +1,5 @@
 
-Flask==0.12.2
+Flask==1.0
 python-dotenv==0.10.3
 flask-limiter==1.0.1
 flask-debugtoolbar==0.10.1
